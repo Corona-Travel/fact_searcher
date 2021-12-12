@@ -1,12 +1,10 @@
-from typing import Optional
-
+from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Depends
-# from reusable_mongodb_connection.fastapi import get_collection
-
-# from .types import Place, PlaceWithoutID, Places
-# from .settings import Settings, get_settings
-import .facts_searcher
+from .types import Fact, FactWithoutId, Facts, Position
+from .settings import Settings, get_settings
+from .facts_searcher import main
 import asyncio
+import httpx
 
 app = FastAPI(
 	openapi_tags=[
@@ -17,9 +15,16 @@ app = FastAPI(
 )
 
 
-@app.post("/facts_searcher/city", tags=["service:facts_searcher"])
-async def search_by_city(places: list[str]):
+@app.post("/facts_searcher/city", response_model=Facts, tags=["service:facts_searcher"])
+async def search_by_city(places: List[str]):
 	cities = await asyncio.gather(
-		*map(facts_searcher.main, places)
+		*map(main, places)
 	)
 	return [ fact for city in cities for fact in city ]
+
+
+@app.post("/facts_searcher/add_facts", response_model=Facts, tags=["service:facts_searcher"])
+async def add_facts(facts: Facts):
+	async with httpx.AsyncClient() as client:
+		for fact in facts:
+			await client.post(f"{settings.places_url}facts", data=fact.json())

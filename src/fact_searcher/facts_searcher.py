@@ -1,7 +1,6 @@
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
-from typing import NamedTuple
-from pydantic import BaseModel
+from .types import Fact, FactWithoutId, Facts, Position
 import asyncio
 import googlesearch
 
@@ -9,20 +8,6 @@ class CustomError(Exception):
 	def __init__(self, message):
 		self.message = message
 	pass
-
-
-class Position(NamedTuple):
-	lng: float
-	lat: float
-
-
-class FactWithoutId(BaseModel):
-	name: str
-	description: str
-	pos: Position
-
-class Fact(FactWithoutId):
-	fact_id: str
 
 
 def fact_parser(soup: BeautifulSoup) -> str:
@@ -94,4 +79,4 @@ async def main(city: str) -> list:
 		print(err.message)
 	return places
 
-asyncio.run(main("Moscow"))
+# asyncio.run(main("Moscow"))
