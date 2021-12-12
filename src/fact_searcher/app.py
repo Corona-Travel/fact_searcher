@@ -2,7 +2,7 @@ from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Depends
 from .types import Fact, FactWithoutId, Facts, Position
 from .settings import Settings, get_settings
-from .facts_searcher import main
+from .fact_searcher import main
 import asyncio
 import httpx
 

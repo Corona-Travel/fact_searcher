@@ -1,0 +1,74 @@
+networks:
+  frontend:
+  backend:
+
+services:
+  mongo:
+    image: mongo:5
+    networks:
+      - backend
+    volumes:
+      - "./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/corona_travel --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    ports:
+      - 27017:27017
+
+  facts:
+    image: ghcr.io/corona-travel/facts:latest
+    environment:
+      MONGO_URL: mongodb://mongo/corona_travel
+      LOG_LEVEL: DEBUG
+    networks:
+      - backend
+    ports:
+      - 12341:1234
+
+  media:
+    image: ghcr.io/corona-travel/media:latest
+    environment:
+      MONGO_URL: mongodb://mongo/corona_travel
+      LOG_LEVEL: DEBUG
+    networks:
+      - backend
+    ports:
+      - 12342:1234
+
+  places:
+    image: ghcr.io/corona-travel/places:latest
+    environment:
+      MONGO_URL: mongodb://mongo/corona_travel
+      LOG_LEVEL: DEBUG
+    networks:
+      - backend
+    ports:
+      - 12343:1234
+
+  quizzes:
+    image: ghcr.io/corona-travel/quizzes:latest
+    environment:
+      MONGO_URL: mongodb://mongo/corona_travel
+      LOG_LEVEL: DEBUG
+    networks:
+      - backend
+    ports:
+      - 12344:1234
+
+  fact_searcher:
+    build:
+      dockerfile: ./Dockerfile
+      args:
+        SRC_PATH: ./src/fact_searcher
+        APP_PATH: ./fact_searcher
+        ASGI_APP: fact_searcher.app:app
+    environment:
+      LOG_LEVEL: DEBUG
+      FACTS_URL: http://facts:1234/
+    networks:
+      - backend
+    ports:
+      - 12348:1234
