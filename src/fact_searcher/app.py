@@ -1,30 +1,40 @@
-from typing import Optional, List
-from fastapi import FastAPI, HTTPException, Depends
-from .types import Fact, FactWithoutId, Facts, Position
-from .settings import Settings, get_settings
-from .fact_searcher import main
 import asyncio
+from typing import List, Optional
+
 import httpx
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
+from .fact_searcher import main
+from .settings import Settings, get_settings
+from .types import Fact, Facts, FactWithoutId, Position
 
 app = FastAPI(
-	openapi_tags=[
-		{
-			"name": "service:facts_searcher",
-		}
-	]
+    openapi_tags=[
+        {
+            "name": "service:facts_searcher",
+        }
+    ]
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
 @app.post("/facts_searcher/city", response_model=Facts, tags=["service:facts_searcher"])
 async def search_by_city(places: List[str]):
-	cities = await asyncio.gather(
-		*map(main, places)
-	)
-	return [ fact for city in cities for fact in city ]
+    cities = await asyncio.gather(*map(main, places))
+    return [fact for city in cities for fact in city]
 
 
-@app.post("/facts_searcher/add_facts", response_model=Facts, tags=["service:facts_searcher"])
+@app.post(
+    "/facts_searcher/add_facts", response_model=Facts, tags=["service:facts_searcher"]
+)
 async def add_facts(facts: Facts):
-	async with httpx.AsyncClient() as client:
-		for fact in facts:
-			await client.post(f"{settings.places_url}facts", data=fact.json())
+    async with httpx.AsyncClient() as client:
+        for fact in facts:
+            await client.post(f"{settings.places_url}facts", data=fact.json())
