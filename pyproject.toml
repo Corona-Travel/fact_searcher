@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "fact_searcher"
+version = "0.1.0"
+description = ""
+authors = ["Meg4Btar -xf minilibx_mms_20200219_beta.tgz"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.70.1"
+uvicorn = "^0.16.0"
+pydantic = {extras = ["dotenv"], version = "^1.8.2"}
+google = "^3.0.0"
+html5lib = "^1.1"
+requests-html = "^0.10.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
