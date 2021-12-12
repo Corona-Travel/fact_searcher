@@ -1,1 +1,13 @@
-__pycache__
+# IDE
+/.idea/
+/.venv/
+/.pytest_cache/
+
+# cache
+/**/__pycache__/
+
+# build
+/dist
+
+# for local testing only
+/mongo-init.js
