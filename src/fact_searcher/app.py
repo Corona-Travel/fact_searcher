@@ -34,7 +34,7 @@ async def search_by_city(places: List[str]):
 @app.post(
     "/facts_searcher/add_facts", response_model=Facts, tags=["service:facts_searcher"]
 )
-async def add_facts(facts: Facts):
+async def add_facts(facts: Facts, settings: Settings = Depends(get_settings)):
     async with httpx.AsyncClient() as client:
         for fact in facts:
             await client.post(f"{settings.places_url}facts", data=fact.json())
