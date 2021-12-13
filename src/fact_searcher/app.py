@@ -37,4 +37,4 @@ async def search_by_city(places: List[str]):
 async def add_facts(facts: Facts, settings: Settings = Depends(get_settings)):
     async with httpx.AsyncClient() as client:
         for fact in facts:
-            await client.post(f"{settings.places_url}facts", data=fact.json())
+            await client.post(f"{settings.facts_url}facts", data=fact.json())
