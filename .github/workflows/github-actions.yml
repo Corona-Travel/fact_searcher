@@ -25,9 +25,7 @@ jobs:
 
       - name: Tests
         run: |
-          docker compose up --build && \
-          docker compose run fact_searcher /bin/bash -c "coverage run -m pytest > /dev/null && coverage report" > ${NAME}_coverage.txt && \
-          docker compose down;
+          docker run -i ${NAME} /bin/bash -c "coverage run -m pytest > /dev/null && coverage report" > ${NAME}_coverage.txt;
 
       - name: Save reports
         uses: actions/upload-artifact@v2

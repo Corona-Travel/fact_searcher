@@ -64,7 +64,7 @@ async def search_facts(name: str, session: HTMLSession) -> list:
     return fact_parser(soup)
 
 
-async def async_search():
+# async def async_search():
 
 
 
@@ -90,15 +90,12 @@ async def main(city: str) -> list:
             element = card.xpath(f"//div[@class='card-body']//a")[0]
             place_name = element.text
             link2coordinates = "".join(element.absolute_links)
-            fact_fields = await asyncio.gather(
-                extract_coords(link2coordinates, session),
-                search_facts(place_name, session),
-            )
-            place_pos = Position(*fact_fields[0])
+            coords = await extract_coords(link2coordinates, session)
+            place_pos = Position(*coords)
             custom_id = "_".join(place_name.lower().split(" "))
             place = Fact(
                 name=place_name,
-                description=fact_fields[1],
+                description="",
                 pos=place_pos,
                 fact_id=custom_id,
             )
