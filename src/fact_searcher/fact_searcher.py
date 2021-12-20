@@ -64,6 +64,10 @@ async def search_facts(name: str, session: HTMLSession) -> list:
     return fact_parser(soup)
 
 
+async def async_search():
+
+
+
 async def main(city: str) -> list:
     try:
         search = city
